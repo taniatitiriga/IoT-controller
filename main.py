@@ -17,6 +17,7 @@ async def main():
         daemon=True
     )
     storage_thread.start()
+    print("Storage thread started...")
 
     # initialize devices
     devices = [
@@ -26,7 +27,6 @@ async def main():
 
     # start network simulation
     try:
-        print("IoT controller (press Ctrl+C to stop)")
         await start_network(devices, data_queue)
     
     # ctrl+c to stop
@@ -34,14 +34,14 @@ async def main():
         pass
     
     finally:
-        print("[System] shutting down...")
+        print("\nShutting down...")
 
         # signal the worker to stop
         data_queue.put(None)
         
         # wait for thread to finish
         storage_thread.join(timeout=2)
-        print("[System] storage saved.")
+        print("Storage saved.")
 
 if __name__ == "__main__":
     asyncio.run(main())
