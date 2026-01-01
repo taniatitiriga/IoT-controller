@@ -36,8 +36,11 @@ Available commands:
         play <track_name> - Play a track
         pause - Pause track
         volume <value> - Set volume level
-    routine <routine_name> - Activate a predefined routine
-        focus - brightness 100%, thermostat 21°C
+    ROUTINE <routine_name> - Activate a predefined routine
+        focus - bulb 4000K @ 100%, thermostat 21°C, speaker "Focus Music"
+        cozy  - bulb 2700K @ 60%, thermostat 22°C, speaker "Jazz"
+        party - bulb 3000K @ 40%, thermostat 21°C, speaker "Party Music"
+        sleep - bulb OFF, thermostat 18°C, speaker STOP
     Ctrl+C - Quit the program\n""")
             continue
         
@@ -60,11 +63,50 @@ Available commands:
             print(f"Device {target_id} not found.")
 
 def apply_routine(name, devices):
-    print(f"Applying routine: {name}")
     if name == "FOCUS":
         for d in devices:
-            if d.device_type == "BULB": d.execute_command("BRIGHTNESS", 100)
-            if d.device_type == "THERMOSTAT": d.execute_command("TARGET_TEMP", 21)
+            if d.device_type == "BULB":
+                d.is_on = True
+                d.execute_command("COLOR", "4000")
+                d.execute_command("BRIGHTNESS", "100")
+            elif d.device_type == "THERMOSTAT":
+                d.execute_command("TARGET_TEMP", "21")
+            elif d.device_type == "SPEAKER":
+                d.execute_command("PLAY", "Focus Music")
+
+    elif name == "SLEEP":
+        for d in devices:
+            if d.device_type == "BULB":
+                d.is_on = False
+            elif d.device_type == "THERMOSTAT":
+                d.execute_command("TARGET_TEMP", "18")
+            elif d.device_type == "SPEAKER":
+                d.execute_command("STOP")
+
+    elif name == "COZY":
+        for d in devices:
+            if d.device_type == "BULB":
+                d.is_on = True
+                d.execute_command("COLOR", "2700")
+                d.execute_command("BRIGHTNESS", "60")
+            elif d.device_type == "THERMOSTAT":
+                d.execute_command("TARGET_TEMP", "22")
+            elif d.device_type == "SPEAKER":
+                d.execute_command("PLAY", "Jazz")
+
+    elif name == "PARTY":
+        for d in devices:
+            if d.device_type == "BULB":
+                d.is_on = True
+                d.execute_command("COLOR", 3000))
+                d.execute_command("BRIGHTNESS", "40")
+            elif d.device_type == "THERMOSTAT":
+                d.execute_command("TARGET_TEMP", "21")
+            elif d.device_type == "SPEAKER":
+                d.execute_command("PLAY", "Party Music")
+    
+    else:
+        print(f"Routine '{name}' not found.")
 
 async def main():
     # set up threads
