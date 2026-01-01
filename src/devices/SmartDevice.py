@@ -11,6 +11,7 @@ class SmartDevice(ABC):
         self.device_type = "GENERIC"
         self.is_connected = False
 
+
     async def connect(self):
         """Simulates connecting with a random delay."""
         print(f"{self.name} is connecting...")
@@ -34,10 +35,11 @@ class SmartDevice(ABC):
             "payload": self.get_status()
         }
 
+
     @abstractmethod
     def get_status(self) -> dict:
         pass
 
     @abstractmethod
-    def execute_command(self, command: str):
+    def execute_command(self, command: str, *args): # accept arguments
         pass
